@@ -1,6 +1,7 @@
 import { QueryResponse } from '@/lib/api';
 import CitationBlock from './CitationBlock';
 import { Scale, ShieldCheck } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 
 interface AnswerCardProps {
   response: QueryResponse;
@@ -11,10 +12,10 @@ export default function AnswerCard({ response }: AnswerCardProps) {
     response.domain_detected === 'tenant'
       ? 'Tenant Rights'
       : response.domain_detected === 'fir'
-      ? 'FIR & Police'
-      : response.domain_detected === 'consumer'
-      ? 'Consumer Protection'
-      : 'Punjab Law';
+        ? 'FIR & Police'
+        : response.domain_detected === 'consumer'
+          ? 'Consumer Protection'
+          : 'Punjab Law';
 
   return (
     <div className="bg-white p-6 sm:p-8 rounded-2xl border border-legal-200 shadow-md">
@@ -32,8 +33,8 @@ export default function AnswerCard({ response }: AnswerCardProps) {
         </div>
       </div>
 
-      <div className="prose prose-emerald max-w-none text-gray-800 text-base leading-relaxed whitespace-pre-line">
-        {response.explanation}
+      <div className="prose prose-emerald max-w-none text-gray-800 text-base leading-relaxed">
+        <ReactMarkdown>{response.explanation}</ReactMarkdown>
       </div>
 
       <CitationBlock citations={response.citations} />

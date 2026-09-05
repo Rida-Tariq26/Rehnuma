@@ -5,7 +5,7 @@ from generation.prompts import SYSTEM_PROMPT, format_user_prompt
 
 def generate_grounded_response(user_query: str, valid_chunks: List[Dict[str, Any]]) -> Dict[str, Any]:
     """
-    Generates a citation-backed response using Gemini 1.5 Flash.
+    Generates a citation-backed response using Gemini 3.6 Flash.
     """
     api_key = os.getenv("GOOGLE_API_KEY")
     
@@ -30,7 +30,7 @@ def generate_grounded_response(user_query: str, valid_chunks: List[Dict[str, Any
     try:
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel(
-            model_name="gemini-1.5-flash",
+            model_name="gemini-3.6-flash",
             system_instruction=SYSTEM_PROMPT
         )
         
