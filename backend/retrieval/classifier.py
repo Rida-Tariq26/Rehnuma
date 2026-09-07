@@ -51,13 +51,14 @@ def classify_query(query: str) -> Tuple[str, float]:
         
     try:
         genai.configure(api_key=api_key)
-        model_names = [
-            os.getenv("GEMINI_MODEL", "gemini-1.5-flash"),
-            "gemini-2.0-flash",
-            "gemini-1.5-flash-latest",
+        env_model = os.getenv("GEMINI_MODEL", "gemini-3.6-flash")
+        model_names = list(dict.fromkeys([
+            env_model,
+            "gemini-3.6-flash",
             "gemini-1.5-flash",
-            "gemini-2.5-flash"
-        ]
+            "gemini-2.0-flash",
+            "gemini-1.5-flash-latest"
+        ]))
         prompt = f"""
 You are a legal domain classifier for Punjab law (Pakistan).
 Classify the following user query into EXACTLY ONE of these categories:

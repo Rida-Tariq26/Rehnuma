@@ -29,13 +29,14 @@ def generate_grounded_response(user_query: str, valid_chunks: List[Dict[str, Any
         
     try:
         genai.configure(api_key=api_key)
-        model_names = [
-            os.getenv("GEMINI_MODEL", "gemini-1.5-flash"),
-            "gemini-2.0-flash",
-            "gemini-1.5-flash-latest",
+        env_model = os.getenv("GEMINI_MODEL", "gemini-3.6-flash")
+        model_names = list(dict.fromkeys([
+            env_model,
+            "gemini-3.6-flash",
             "gemini-1.5-flash",
-            "gemini-2.5-flash"
-        ]
+            "gemini-2.0-flash",
+            "gemini-1.5-flash-latest"
+        ]))
         model = None
         last_err = None
         user_prompt = format_user_prompt(user_query, valid_chunks)
