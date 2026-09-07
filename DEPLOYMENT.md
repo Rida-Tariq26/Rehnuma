@@ -32,25 +32,25 @@ This guide walks you through deploying Rehnuma for free:
 
 ---
 
-## Part 2: Deploying the Frontend on Vercel
+## Part 2: Deploying the Frontend (Render Web Service or Vercel)
 
-1. **Create a Vercel Account**:
-   - Go to [vercel.com](https://vercel.com) and sign up with GitHub.
+### Option A: Render Web Service (Node.js)
+1. In Render dashboard, click **New +** -> **Web Service**.
+2. Connect your GitHub repository.
+3. Set **Root Directory**: `frontend`
+4. Set **Build Command**: `npm install && npm run build`
+5. Set **Start Command**: `npm start`
+6. Under **Environment Variables**, add:
+   - `NEXT_PUBLIC_API_URL`: `https://<your-backend-app-name>.onrender.com/api`
+7. Click **Create Web Service**.
 
-2. **Import Project**:
-   - Click **Add New...** -> **Project**.
-   - Select your Rehnuma GitHub repository.
-
-3. **Configure Project**:
-   - Set **Framework Preset**: `Next.js`
-   - Set **Root Directory**: `frontend`
-
-4. **Environment Variables**:
-   - Add variable name: `NEXT_PUBLIC_API_URL`
-   - Value: `https://rehnuma-api.onrender.com/api` (your Render backend API URL).
-
-5. **Deploy**:
-   - Click **Deploy**. In under 60 seconds, your site will be live!
+### Option B: Deploying on Vercel
+1. Sign in to [vercel.com](https://vercel.com) with GitHub.
+2. Click **Add New...** -> **Project** and select your Rehnuma repository.
+3. Set **Root Directory**: `frontend`
+4. Under **Environment Variables**, add:
+   - `NEXT_PUBLIC_API_URL`: `https://<your-backend-app-name>.onrender.com/api`
+5. Click **Deploy**.
 
 ---
 

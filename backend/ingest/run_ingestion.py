@@ -7,8 +7,24 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from ingest.parser import process_sources_directory
 from ingest.embedder import populate_vector_store
 
+def find_sources_dir() -> str:
+    base_dir = os.path.dirname(__file__)
+    candidates = [
+        os.path.abspath(os.path.join(base_dir, "..", "Sources")),
+        os.path.abspath(os.path.join(base_dir, "..", "..", "Sources")),
+        os.path.abspath("Sources"),
+        os.path.abspath("backend/Sources"),
+    ]
+    for path in candidates:
+        if os.path.exists(path) and os.path.isdir(path):
+            # Check if directory has files
+            if any(f.endswith(('.pdf', '.doc', '.txt')) for root, _, files in os.walk(path) for f in files):
+                return path
+    # Return default fallback
+    return os.path.abspath(os.path.join(base_dir, "..", "Sources"))
+
 def main():
-    sources_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "Sources"))
+    sources_dir = find_sources_dir()
     print(f"=== Starting Rehnuma Legal Data Ingestion ===")
     print(f"Scanning directory: {sources_dir}")
     

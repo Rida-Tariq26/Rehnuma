@@ -51,8 +51,13 @@ def classify_query(query: str) -> Tuple[str, float]:
         
     try:
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel("gemini-1.5-flash")
-        
+        model_names = [
+            os.getenv("GEMINI_MODEL", "gemini-1.5-flash"),
+            "gemini-2.0-flash",
+            "gemini-1.5-flash-latest",
+            "gemini-1.5-flash",
+            "gemini-2.5-flash"
+        ]
         prompt = f"""
 You are a legal domain classifier for Punjab law (Pakistan).
 Classify the following user query into EXACTLY ONE of these categories:
@@ -65,10 +70,20 @@ User Query: "{query}"
 
 Output ONLY a JSON object: {{"domain": "<fir|tenant|consumer|unknown>", "confidence": <float 0.0 to 1.0>}}
 """
-        response = model.generate_content(
-            prompt,
-            generation_config={"response_mime_type": "application/json"}
-        )
+        response = None
+        for name in model_names:
+            try:
+                model = genai.GenerativeModel(name)
+                response = model.generate_content(
+                    prompt,
+                    generation_config={"response_mime_type": "application/json"}
+                )
+                break
+            except Exception:
+                continue
+
+        if not response:
+            return classify_query_rule_based(query)
         import json
         res = json.loads(response.text.strip())
         domain = res.get("domain", "unknown").lower()

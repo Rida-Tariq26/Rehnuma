@@ -20,17 +20,41 @@ app = FastAPI(
 # Enable CORS for Next.js frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Adjust for production frontend URL
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 app.include_router(router, prefix="/api")
 
+@app.on_event("startup")
+def startup_event():
+    try:
+        from ingest.embedder import get_chroma_client
+        from ingest.run_ingestion import main as run_ingestion_main
+        
+        client = get_chroma_client()
+        collections = client.list_collections()
+        has_data = False
+        if collections:
+            for col in collections:
+                if col.count() > 0:
+                    has_data = True
+                    break
+        if not has_data:
+            print("[Startup] ChromaDB collections missing or empty. Running auto-ingestion...")
+            run_ingestion_main()
+        else:
+            print("[Startup] ChromaDB vector store verified and ready.")
+    except Exception as e:
+        print(f"[Startup Warning] Vector store startup check failed: {e}")
+
 @app.get("/")
+@app.get("/health")
 def root():
     return {
+        "status": "healthy",
         "message": "Welcome to Rehnuma API — Punjab Legal Information Assistant",
         "docs_url": "/docs",
         "health_check": "/api/health"

@@ -67,7 +67,7 @@ export default function AskPage() {
         <div className="bg-red-50 p-6 rounded-2xl border border-red-200 text-red-900 text-sm">
           <strong>Backend Connection Error:</strong> {error}
           <p className="text-xs mt-2 text-red-700">
-            Make sure the FastAPI backend is running on <code>http://localhost:8000</code>.
+            Make sure the FastAPI backend service is running and reachable at your configured <code>NEXT_PUBLIC_API_URL</code> environment variable.
           </p>
         </div>
       )}

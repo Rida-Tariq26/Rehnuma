@@ -16,7 +16,13 @@ export interface QueryResponse {
   query: string;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+function getApiBaseUrl(): string {
+  const envUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+  const cleanUrl = envUrl.trim().replace(/\/+$/, '');
+  return cleanUrl.endsWith('/api') ? cleanUrl : `${cleanUrl}/api`;
+}
+
+const API_BASE_URL = getApiBaseUrl();
 
 export async function askLegalQuestion(question: string): Promise<QueryResponse> {
   const response = await fetch(`${API_BASE_URL}/ask`, {

@@ -29,19 +29,35 @@ def generate_grounded_response(user_query: str, valid_chunks: List[Dict[str, Any
         
     try:
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel(
-            model_name="gemini-3.6-flash",
-            system_instruction=SYSTEM_PROMPT
-        )
-        
+        model_names = [
+            os.getenv("GEMINI_MODEL", "gemini-1.5-flash"),
+            "gemini-2.0-flash",
+            "gemini-1.5-flash-latest",
+            "gemini-1.5-flash",
+            "gemini-2.5-flash"
+        ]
+        model = None
+        last_err = None
         user_prompt = format_user_prompt(user_query, valid_chunks)
-        response = model.generate_content(user_prompt)
         
-        return {
-            "explanation": response.text.strip(),
-            "citations": citations,
-            "source_passages": valid_chunks
-        }
+        for name in model_names:
+            try:
+                model = genai.GenerativeModel(
+                    model_name=name,
+                    system_instruction=SYSTEM_PROMPT
+                )
+                response = model.generate_content(user_prompt)
+                return {
+                    "explanation": response.text.strip(),
+                    "citations": citations,
+                    "source_passages": valid_chunks
+                }
+            except Exception as ex:
+                last_err = ex
+                continue
+
+        if last_err:
+            raise last_err
     except Exception as e:
         print(f"[LLM Generation Error] {e}")
         return {
